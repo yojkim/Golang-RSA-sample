@@ -50,6 +50,17 @@ func main() {
 	fmt.Printf("OAEP encrypted [%s] to \n[%x]\n", string(message), ciphertext)
 	fmt.Println()
 
+	// Decrypt Message
+	plainText, err := rsa.DecryptOAEP(hash, rand.Reader, raulPrivateKey, ciphertext, label)
+
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	fmt.Printf("OAEP decrypted [%x] to \n[%s]\n", ciphertext, plainText)
+	fmt.Println()
+
 	// Message - Signature
 	var opts rsa.PSSOptions
 	opts.SaltLength = rsa.PSSSaltLengthAuto // for simple example
@@ -67,16 +78,6 @@ func main() {
 	}
 
 	fmt.Printf("PSS Signature : %x\n", signature)
-
-	// Decrypt Message
-	plainText, err := rsa.DecryptOAEP(hash, rand.Reader, raulPrivateKey, ciphertext, label)
-
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-
-	fmt.Printf("OAEP decrypted [%x] to \n[%s]\n", ciphertext, plainText)
 
 	//Verify Signature
 	err = rsa.VerifyPSS(miryanPublicKey, newhash, hashed, signature, &opts)
